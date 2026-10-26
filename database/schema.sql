@@ -1,0 +1,29 @@
+CREATE TABLE users (
+    user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE accounts (
+    account_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(user_id),
+    account_name VARCHAR(100) NOT NULL,
+    account_type VARCHAR(30) NOT NULL,
+    account_number VARCHAR(30) NOT NULL UNIQUE,
+    balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+    currency VARCHAR(3) NOT NULL DEFAULT 'INR',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions (
+    transaction_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    account_id BIGINT NOT NULL REFERENCES accounts(account_id),
+    transaction_type VARCHAR(20) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0),
+    transaction_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    category VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'COMPLETED'
+);
